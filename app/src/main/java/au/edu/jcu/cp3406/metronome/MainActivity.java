@@ -2,6 +2,7 @@ package au.edu.jcu.cp3406.metronome;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -24,18 +25,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         metronome = new Metronome(4);
         delay = metronome.getDelay(120);
+
         toggle = findViewById(R.id.toggle);
         currentBeat = findViewById(R.id.currentBeat);
         currentBeat.setText(Integer.toString(metronome.getCurrentBeat()));
         tempo = findViewById(R.id.tempo);
         tempo.setText(R.string.default_tempo);
-        isRunning = false;
 
+        isRunning = false;
+        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.beat);
         handler = new Handler();
         handler.post(new Runnable() {
             @Override
             public void run() {
                 if (isRunning) {
+                    mediaPlayer.start();
                     metronome.tick();
                     currentBeat.setText(Integer.toString(metronome.getCurrentBeat()));
                 }
