@@ -12,12 +12,21 @@ import static org.junit.Assert.*;
 public class MetronomeTest {
     @Test
     public void testTicker() {
-        Metronome metronome = new Metronome(120, 8);
+        Metronome metronome = new Metronome(8);
         metronome.tick();
         assertEquals(metronome.getCurrentBeat(), 2);
         for (int i = 0; i < 7; ++i) {
             metronome.tick();
         }
         assertEquals(metronome.getCurrentBeat(), 1);
+    }
+
+    @Test
+    public void testDelay() {
+        Metronome metronome = new Metronome(8);
+        int delay = metronome.getDelay(120);
+        assertEquals(delay, 500);
+        delay = metronome.getDelay(157);
+        assertEquals(delay, 382);
     }
 }
