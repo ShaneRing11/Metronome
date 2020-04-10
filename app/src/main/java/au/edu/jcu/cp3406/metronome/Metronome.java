@@ -4,10 +4,12 @@ public class Metronome {
 
     private int beats;
     private int currentBeat;
+    private int tempo;
 
-    public Metronome(int beats) {
+    public Metronome(int beats, int currentBeat, int tempo) {
         this.beats = beats;
-        currentBeat = 1;
+        this.currentBeat = currentBeat;
+        this.tempo = tempo;
     }
 
     public void tick() {
@@ -26,8 +28,12 @@ public class Metronome {
         return currentBeat;
     }
 
-    public int getDelay(float tempo) {
-        float beatsPerSecond = tempo / 60;
+    public int getTempo() {
+        return tempo;
+    }
+
+    public int getDelay() {
+        float beatsPerSecond = (float) tempo / 60;
         return (int) (1000 / beatsPerSecond);
     }
 

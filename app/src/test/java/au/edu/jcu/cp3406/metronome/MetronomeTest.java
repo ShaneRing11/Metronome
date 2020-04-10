@@ -11,8 +11,16 @@ import static org.junit.Assert.*;
  */
 public class MetronomeTest {
     @Test
+    public void testConstructor() {
+        Metronome metronome = new Metronome(8, 1, 120);
+        assertEquals(metronome.getBeats(), 8);
+        assertEquals(metronome.getCurrentBeat(), 1);
+        assertEquals(metronome.getTempo(), 120);
+    }
+
+    @Test
     public void testTicker() {
-        Metronome metronome = new Metronome(8);
+        Metronome metronome = new Metronome(8, 1, 120);
         metronome.tick();
         assertEquals(metronome.getCurrentBeat(), 2);
         for (int i = 0; i < 7; ++i) {
@@ -23,10 +31,8 @@ public class MetronomeTest {
 
     @Test
     public void testDelay() {
-        Metronome metronome = new Metronome(8);
-        int delay = metronome.getDelay(120);
-        assertEquals(delay, 500);
-        delay = metronome.getDelay(157);
+        Metronome metronome = new Metronome(8, 1, 157);
+        int delay = metronome.getDelay();
         assertEquals(delay, 382);
     }
 }

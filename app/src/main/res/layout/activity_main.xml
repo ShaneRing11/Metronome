@@ -9,14 +9,12 @@
     <TextView
         android:id="@+id/currentBeat"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/tempo"
+        android:id="@+id/metronomeDetails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/toggle"
