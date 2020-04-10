@@ -16,21 +16,27 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     private Metronome metronome;
+    private SoundPool soundPool;
+    private int downbeatSound;
+    private int beatSound;
     private TextView tempoText;
     private TextView beatsText;
     private TextView currentBeat;
     private Button toggle;
     private boolean isRunning;
     private Handler handler;
+    private Runnable runnable;
     private int delay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-        final int downbeat = soundPool.load(this, R.raw.downbeat, 1);
-        final int beat = soundPool.load(this, R.raw.beat, 1);
+
+        handler = new Handler();
+        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        downbeatSound = soundPool.load(this, R.raw.downbeat, 1);
+        beatSound = soundPool.load(this, R.raw.beat, 1);
 
         toggle = findViewById(R.id.toggle);
         currentBeat = findViewById(R.id.currentBeat);
@@ -45,35 +51,19 @@ public class MainActivity extends AppCompatActivity {
                     savedInstanceState.getInt("beats"),
                     savedInstanceState.getInt("currentBeat"),
                     savedInstanceState.getInt("tempo"));
-            boolean running = savedInstanceState.getBoolean("isRunning");
-            if (running) {
-                enableMetronome();
-            }
+            isRunning = savedInstanceState.getBoolean("isRunning");
         }
 
-        setDescription();
         delay = metronome.getDelay();
-        handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (isRunning) {
-                    currentBeat.setText(Integer.toString(metronome.getCurrentBeat()));
-                    if (metronome.getCurrentBeat() == 1) {
-                        soundPool.play(downbeat, 1, 1, 1, 0, 1);
-                    } else {
-                        soundPool.play(beat, 1, 1, 1, 0, 1);
-                    }
-                    metronome.tick();
-                }
-                handler.postDelayed(this, delay);
-            }
-        });
+        setDescription();
+        if (isRunning) {
+            enableMetronome();
+        }
     }
 
     @Override
     protected void onStop() {
-        //TODO make runnable stop here
+        handler.removeCallbacks(runnable);
         super.onStop();
     }
 
@@ -104,10 +94,27 @@ public class MainActivity extends AppCompatActivity {
     private void enableMetronome() {
         isRunning = true;
         toggle.setText((getText(R.string.stop)));
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isRunning) {
+                    currentBeat.setText(Integer.toString(metronome.getCurrentBeat()));
+                    if (metronome.getCurrentBeat() == 1) {
+                        soundPool.play(downbeatSound, 1, 1, 1, 0, 1);
+                    } else {
+                        soundPool.play(beatSound, 1, 1, 1, 0, 1);
+                    }
+                    metronome.tick();
+                }
+                handler.postDelayed(this, delay);
+            }
+        };
+        handler.post(runnable);
     }
 
     private void disableMetronome() {
         isRunning = false;
+        handler.removeCallbacks(runnable);
         currentBeat.setText("");
         toggle.setText((getText(R.string.start)));
         metronome.reset();
@@ -130,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 delay = metronome.getDelay();
                 metronome.setBeats(data.getIntExtra("beats", 4));
                 setDescription();
+                if (isRunning) {
+                    enableMetronome();
+                }
             }
         }
     }
