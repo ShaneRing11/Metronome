@@ -4,20 +4,19 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
+/** Check the Metronome class is operating properly */
 public class MetronomeTest {
+
+    /** Check the constructor sets values correctly */
     @Test
     public void testConstructor() {
         Metronome metronome = new Metronome(8, 1, 120);
-        assertEquals(metronome.getBeats(), 8);
+        assertEquals(metronome.getBeatsPerMeasure(), 8);
         assertEquals(metronome.getCurrentBeat(), 1);
         assertEquals(metronome.getTempo(), 120);
     }
 
+    /** Check the tick() function increments and wraps correctly */
     @Test
     public void testTicker() {
         Metronome metronome = new Metronome(8, 1, 120);
@@ -29,6 +28,7 @@ public class MetronomeTest {
         assertEquals(metronome.getCurrentBeat(), 1);
     }
 
+    /** Check the delay between ticks in milliseconds is calculated correctly */
     @Test
     public void testDelay() {
         Metronome metronome = new Metronome(8, 1, 157);

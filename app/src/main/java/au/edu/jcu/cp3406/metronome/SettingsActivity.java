@@ -13,7 +13,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected static int SETTINGS_REQUEST = 751;
 
     private int tempo;
-    private int beats;
+    private int beatsPerMeasure;
     private TextView tempoText;
     private SeekBar tempoBar;
     private TextView beatsText;
@@ -26,7 +26,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         tempo = intent.getIntExtra("tempo", 120);
-        beats = intent.getIntExtra("beats", 4);
+        beatsPerMeasure = intent.getIntExtra("beatsPerMeasure", 4);
+
         tempoText = findViewById(R.id.tempo_text);
         tempoText.setText(String.format(getResources().getString(R.string.display_tempo), tempo));
         tempoBar = findViewById(R.id.tempo_bar);
@@ -34,6 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
         tempoBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                // Raise value if below minimum
                 if (i < 30) {
                     tempoText.setText(
                             String.format(getResources().getString(R.string.display_tempo), 30));
@@ -53,14 +55,16 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+
         beatsText = findViewById(R.id.beats_text);
         beatsText.setText(String.format(
-                getResources().getString(R.string.display_beats), beats));
+                getResources().getString(R.string.display_beats), beatsPerMeasure));
         beatsBar = findViewById(R.id.beats_bar);
-        beatsBar.setProgress(beats);
+        beatsBar.setProgress(beatsPerMeasure);
         beatsBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                // Raise values if below minimum
                 if (i < 2) {
                     beatsText.setText(
                             String.format(getResources().getString(R.string.display_beats), 2));
@@ -84,16 +88,18 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void applyClicked(View view) {
         tempo = tempoBar.getProgress();
+
+        // Raise values if below minimum
         if (tempo < 30) {
             tempo = 30;
         }
-        beats = beatsBar.getProgress();
-        if (beats < 2) {
-            beats = 2;
+        beatsPerMeasure = beatsBar.getProgress();
+        if (beatsPerMeasure < 2) {
+            beatsPerMeasure = 2;
         }
         Intent intent = new Intent();
         intent.putExtra("tempo", tempo);
-        intent.putExtra("beats", beats);
+        intent.putExtra("beatsPerMeasure", beatsPerMeasure);
         setResult(RESULT_OK, intent);
         finish();
     }

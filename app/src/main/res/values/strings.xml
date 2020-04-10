@@ -6,4 +6,5 @@
     <string name="display_tempo">Tempo: %d bpm</string>
     <string name="display_beats">Beats per measure: %d</string>
     <string name="apply">Apply</string>
+    <string name="current_beat">%d</string>
 </resources>

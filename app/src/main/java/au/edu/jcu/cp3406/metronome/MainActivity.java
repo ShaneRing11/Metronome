@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private int beatSound;
     private TextView tempoText;
     private TextView beatsText;
-    private TextView currentBeat;
+    private TextView indicator;
     private Button toggle;
     private boolean isRunning;
     private Handler handler;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         beatSound = soundPool.load(this, R.raw.beat, 1);
 
         toggle = findViewById(R.id.toggle);
-        currentBeat = findViewById(R.id.currentBeat);
+        indicator = findViewById(R.id.indicator);
         tempoText = findViewById(R.id.tempo_text);
         beatsText = findViewById(R.id.beats_text);
 
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             isRunning = false;
         } else {
             metronome = new Metronome(
-                    savedInstanceState.getInt("beats"),
+                    savedInstanceState.getInt("beatsPerMeasure"),
                     savedInstanceState.getInt("currentBeat"),
                     savedInstanceState.getInt("tempo"));
             isRunning = savedInstanceState.getBoolean("isRunning");
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("beats", metronome.getBeats());
+        outState.putInt("beatsPerMeasure", metronome.getBeatsPerMeasure());
         outState.putInt("currentBeat", metronome.getCurrentBeat());
         outState.putInt("tempo", metronome.getTempo());
         outState.putBoolean("isRunning", isRunning);
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         tempoText.setText(String.format(
                 getResources().getString(R.string.display_tempo), metronome.getTempo()));
         beatsText.setText(String.format(
-                getResources().getString(R.string.display_beats), metronome.getBeats()));
+                getResources().getString(R.string.display_beats), metronome.getBeatsPerMeasure()));
     }
 
     public void toggleClicked(View view) {
@@ -98,11 +98,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (isRunning) {
-                    currentBeat.setText(Integer.toString(metronome.getCurrentBeat()));
+                    indicator.setText(String.format(
+                            getString(R.string.current_beat), metronome.getCurrentBeat()));
                     if (metronome.getCurrentBeat() == 1) {
                         soundPool.play(downbeatSound, 1, 1, 1, 0, 1);
+                        indicator.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     } else {
                         soundPool.play(beatSound, 1, 1, 1, 0, 1);
+                        indicator.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                     }
                     metronome.tick();
                 }
@@ -115,14 +118,15 @@ public class MainActivity extends AppCompatActivity {
     private void disableMetronome() {
         isRunning = false;
         handler.removeCallbacks(runnable);
-        currentBeat.setText("");
+        indicator.setText("");
+        indicator.setBackgroundColor(getResources().getColor(android.R.color.background_light));
         toggle.setText((getText(R.string.start)));
         metronome.reset();
     }
 
     public void settingsClicked(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
-        intent.putExtra("beats", metronome.getBeats());
+        intent.putExtra("beatsPerMeasure", metronome.getBeatsPerMeasure());
         intent.putExtra("tempo", metronome.getTempo());
         startActivityForResult(intent, SettingsActivity.SETTINGS_REQUEST);
     }
@@ -133,9 +137,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == SettingsActivity.SETTINGS_REQUEST) {
             if (resultCode == RESULT_OK) {
+                assert data != null;
                 metronome.setTempo(data.getIntExtra("tempo", 120));
                 delay = metronome.getDelay();
-                metronome.setBeats(data.getIntExtra("beats", 4));
+                metronome.setBeatsPerMeasure(data.getIntExtra("beatsPerMeasure", 4));
                 setDescription();
                 if (isRunning) {
                     enableMetronome();

@@ -4,24 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".SettingsActivity">
-
-    <TextView
-        android:id="@+id/tempo_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <SeekBar
-        android:id="@+id/tempo_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:max="240" />
 
     <TextView
         android:id="@+id/beats_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="20sp" />
 
     <SeekBar
         android:id="@+id/beats_bar"
@@ -30,8 +20,21 @@
         android:padding="10dp"
         android:max="24" />
 
-    <Button
+    <TextView
+        android:id="@+id/tempo_text"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp" />
+
+    <SeekBar
+        android:id="@+id/tempo_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:max="240" />
+
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/apply"
