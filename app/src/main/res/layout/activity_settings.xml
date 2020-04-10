@@ -4,36 +4,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
-
-    <TextView
-        android:id="@+id/currentBeat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    tools:context=".SettingsActivity">
 
     <TextView
         android:id="@+id/tempo_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <SeekBar
+        android:id="@+id/tempo_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:max="240" />
 
     <TextView
         android:id="@+id/beats_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-
-    <Button
-        android:id="@+id/toggle"
+    <SeekBar
+        android:id="@+id/beats_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start"
-        android:onClick="toggleClicked" />
+        android:padding="10dp"
+        android:max="24" />
 
     <Button
-        android:id="@+id/settings"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/settings"
-        android:onClick="settingsClicked" />
+        android:layout_gravity="center"
+        android:text="@string/apply"
+        android:onClick="applyClicked" />
 
 </LinearLayout>

@@ -1,7 +1,6 @@
 package au.edu.jcu.cp3406.metronome;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -10,11 +9,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     private Metronome metronome;
+    private TextView tempoText;
+    private TextView beatsText;
     private TextView currentBeat;
-    private TextView metronomeDetails;
     private Button toggle;
     private boolean isRunning;
     private Handler handler;
@@ -30,31 +34,26 @@ public class MainActivity extends AppCompatActivity {
 
         toggle = findViewById(R.id.toggle);
         currentBeat = findViewById(R.id.currentBeat);
-        metronomeDetails = findViewById(R.id.metronomeDetails);
+        tempoText = findViewById(R.id.tempo_text);
+        beatsText = findViewById(R.id.beats_text);
 
         if (savedInstanceState == null) {
             metronome = new Metronome(4, 1, 120);
-            metronomeDetails.setText(String.format(getResources().getString(R.string.metronome_details),
-                    metronome.getBeats(), metronome.getTempo()));
             isRunning = false;
         } else {
             metronome = new Metronome(
                     savedInstanceState.getInt("beats"),
                     savedInstanceState.getInt("currentBeat"),
                     savedInstanceState.getInt("tempo"));
-            metronomeDetails.setText(String.format(getResources().getString(R.string.metronome_details),
-                    savedInstanceState.getInt("beats"),
-                    savedInstanceState.getInt("tempo")));
-            isRunning = savedInstanceState.getBoolean("isRunning");
-            if (isRunning) {
-                toggle.setText(getResources().getString(R.string.stop));
+            boolean running = savedInstanceState.getBoolean("isRunning");
+            if (running) {
+                enableMetronome();
             }
         }
 
-        currentBeat.setText(Integer.toString(metronome.getCurrentBeat()));
+        setDescription();
         delay = metronome.getDelay();
         handler = new Handler();
-        //TODO stop handler from adding new runnable every time onStart is called
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -73,12 +72,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onStop() {
+        //TODO make runnable stop here
+        super.onStop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("beats", metronome.getBeats());
         outState.putInt("currentBeat", metronome.getCurrentBeat());
         outState.putInt("tempo", metronome.getTempo());
         outState.putBoolean("isRunning", isRunning);
+    }
+
+    private void setDescription() {
+        tempoText.setText(String.format(
+                getResources().getString(R.string.display_tempo), metronome.getTempo()));
+        beatsText.setText(String.format(
+                getResources().getString(R.string.display_beats), metronome.getBeats()));
     }
 
     public void toggleClicked(View view) {
@@ -90,19 +102,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void enableMetronome() {
-        //TODO move runnable into here
         isRunning = true;
         toggle.setText((getText(R.string.stop)));
-
     }
 
     private void disableMetronome() {
-        //TODO make runnable stop here
         isRunning = false;
+        currentBeat.setText("");
         toggle.setText((getText(R.string.start)));
         metronome.reset();
-        currentBeat.setText(Integer.toString(metronome.getCurrentBeat()));
     }
 
-    //TODO add settings activity
+    public void settingsClicked(View view) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        intent.putExtra("beats", metronome.getBeats());
+        intent.putExtra("tempo", metronome.getTempo());
+        startActivityForResult(intent, SettingsActivity.SETTINGS_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SettingsActivity.SETTINGS_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                metronome.setTempo(data.getIntExtra("tempo", 120));
+                delay = metronome.getDelay();
+                metronome.setBeats(data.getIntExtra("beats", 4));
+                setDescription();
+            }
+        }
+    }
 }

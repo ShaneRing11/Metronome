@@ -1,18 +1,18 @@
 package au.edu.jcu.cp3406.metronome;
 
-public class Metronome {
+class Metronome {
 
     private int beats;
     private int currentBeat;
     private int tempo;
 
-    public Metronome(int beats, int currentBeat, int tempo) {
+    Metronome(int beats, int currentBeat, int tempo) {
         this.beats = beats;
         this.currentBeat = currentBeat;
         this.tempo = tempo;
     }
 
-    public void tick() {
+    void tick() {
         if (currentBeat < beats) {
             ++currentBeat;
         } else {
@@ -20,24 +20,31 @@ public class Metronome {
         }
     }
 
-    public int getBeats() {
-        return beats;
-    }
-
-    public int getCurrentBeat() {
-        return currentBeat;
-    }
-
-    public int getTempo() {
+    int getTempo() {
         return tempo;
     }
 
-    public int getDelay() {
+    void setTempo(int tempo) {
+        this.tempo = tempo;
+    }
+
+    int getBeats() {
+        return beats;
+    }
+
+    void setBeats(int beats) {
+        this.beats = beats;
+    }
+
+    int getCurrentBeat() {
+        return currentBeat;
+    }
+    int getDelay() {
         float beatsPerSecond = (float) tempo / 60;
         return (int) (1000 / beatsPerSecond);
     }
 
-    public void reset() {
+    void reset() {
         currentBeat = 1;
     }
 }
