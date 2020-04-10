@@ -62,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (isRunning) {
+            enableMetronome();
+        }
+
+    }
+
+    @Override
     protected void onStop() {
         handler.removeCallbacks(runnable);
         super.onStop();
@@ -102,10 +111,10 @@ public class MainActivity extends AppCompatActivity {
                             getString(R.string.current_beat), metronome.getCurrentBeat()));
                     if (metronome.getCurrentBeat() == 1) {
                         soundPool.play(downbeatSound, 1, 1, 1, 0, 1);
-                        indicator.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                        indicator.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                     } else {
                         soundPool.play(beatSound, 1, 1, 1, 0, 1);
-                        indicator.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                        indicator.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     }
                     metronome.tick();
                 }
@@ -142,9 +151,6 @@ public class MainActivity extends AppCompatActivity {
                 delay = metronome.getDelay();
                 metronome.setBeatsPerMeasure(data.getIntExtra("beatsPerMeasure", 4));
                 setDescription();
-                if (isRunning) {
-                    enableMetronome();
-                }
             }
         }
     }
