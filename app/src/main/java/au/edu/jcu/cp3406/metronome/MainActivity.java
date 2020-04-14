@@ -56,9 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
         delay = metronome.getDelay();
         setDescription();
-        if (isRunning) {
-            enableMetronome();
-        }
     }
 
     @Override
@@ -67,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         if (isRunning) {
             enableMetronome();
         }
-
     }
 
     @Override
